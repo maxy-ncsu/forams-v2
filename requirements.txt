@@ -1,0 +1,11 @@
+Numpy
+opencv-python
+serial
+Pillow
+scikit-image
+pyserial
+camera
+matplotlib
+PyQt5
+PyQt5-tools
+imutils
