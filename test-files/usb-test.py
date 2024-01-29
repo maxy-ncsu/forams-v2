@@ -2,25 +2,12 @@ import sys
 import glob
 import serial
 
-class Solenoids:
-    def __init__(self):
-        print("solenoids initialized")
-        self.state = [0, 0, 0, 0, 0]
-
-    def changeSolenoid(self, sol):
-        status = "opened"
-        if self.state[sol]: status = "closed"
-        self.state[sol] = ~self.state[sol]
-
-        print("solenoid " + str(sol) + " " + status)
 
 def serial_ports():
     """ Lists serial port names
 
         :raises EnvironmentError:
             On unsupported or unknown platforms
-        :raises RuntimeError:
-            No ports found
         :returns:
             A list of the serial ports available on the system
     """
@@ -42,8 +29,8 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
-
-    if (len(result) < 1):
-        raise RuntimeError('No ports detected')
-
     return result
+
+
+if __name__ == '__main__':
+    print(serial_ports())

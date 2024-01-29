@@ -40,9 +40,12 @@ class Ui_Foram_GUI_proto(object):
         # initialize class variables
         self.cam = ToupCamCamera()
         self.cam.open()
-        self.exposure = 7
+        self.exposure = self.cam.get_exposure_time()
         self.cam.set_exposure_time(self.exposure)
-        self.arduino = serial.Serial(port='COM4', baudrate=9600, timeout=.1)
+        self.gain = self.cam.get_gain()
+        self.cam.set_gain(self.gain)
+        ports = serial_ports()
+        self.arduino = serial.Serial(port=ports[0], baudrate=9600, timeout=.1)
         self.arduino.write(str.encode(str(0)))
         self.trainDetection()
         self.frames = 0
@@ -91,13 +94,21 @@ class Ui_Foram_GUI_proto(object):
         self.menubar.addAction(self.menuPrototype.menuAction())
 
         self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
-        self.horizontalSlider.setGeometry(QtCore.QRect(100, 700, 400, 30))
+        self.horizontalSlider.setGeometry(QtCore.QRect(100, 700, 300, 30))
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setObjectName("horizontalSlider")
         self.horizontalSlider.setMinimum(0)
-        self.horizontalSlider.setMaximum(100)
-        self.horizontalSlider.setValue(7)
+        self.horizontalSlider.setMaximum(self.exposure * 2)
+        self.horizontalSlider.setValue(self.exposure)
         self.horizontalSlider.sliderReleased.connect(self.exposure_changed)
+        self.horizontalSlider2 = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider2.setGeometry(QtCore.QRect(470, 700, 300, 30))
+        self.horizontalSlider2.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider2.setObjectName("horizontalSlider2")
+        self.horizontalSlider2.setMinimum(0)
+        self.horizontalSlider2.setMaximum(self.gain * 2)
+        self.horizontalSlider2.setValue(self.gain)
+        self.horizontalSlider2.sliderReleased.connect(self.gain_changed)
 
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(30, 700, 70, 30))
@@ -108,6 +119,9 @@ class Ui_Foram_GUI_proto(object):
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setGeometry(QtCore.QRect(100, 750, 70, 30))
         self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(430, 700, 30, 30))
+        self.label_5.setObjectName("label_5")
 
         self.retranslateUi(Foram_GUI_proto)
         QtCore.QMetaObject.connectSlotsByName(Foram_GUI_proto)
@@ -201,6 +215,11 @@ class Ui_Foram_GUI_proto(object):
         print("exposure = " + str(self.exposure))
         self.cam.set_exposure_time(self.exposure)
 
+    def gain_changed(self):
+        self.gain = self.horizontalSlider2.value()
+        print("gain = " + str(self.gain))
+        self.cam.set_gain(self.gain)
+
     def retranslateUi(self, Foram_GUI_proto):
         _translate = QtCore.QCoreApplication.translate
         Foram_GUI_proto.setWindowTitle(_translate("Foram_GUI_proto", "MainWindow"))
@@ -213,6 +232,7 @@ class Ui_Foram_GUI_proto(object):
         self.label_2.setText(_translate("Foram_GUI_proto", "Exposure"))
         self.label_3.setText(_translate("Foram_GUI_proto", "Detected"))
         self.label_4.setText(_translate("Foram_GUI_proto", "No"))
+        self.label_5.setText(_translate("Foram_GUI_proto", "Gain"))
 
     def changeSolenoid1(self):
         self.solenoid.changeSolenoid(1)
@@ -231,7 +251,7 @@ class Ui_Foram_GUI_proto(object):
         self.arduino.write(str.encode(str(4)))
 
     def saveImg(self):
-        path = 'images/12-15-2023/image-{:03d}.jpg'.format(self.count)
+        path = 'images/01-22-2024/image-{:03d}.jpg'.format(self.count)
         self.count += 1
         self.cam.save(path)
         print("image " + str(self.count) + " saved")

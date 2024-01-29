@@ -7,5 +7,4 @@ pyserial
 camera
 matplotlib
 PyQt5
-PyQt5-tools
 imutils
