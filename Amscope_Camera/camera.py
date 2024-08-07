@@ -27,7 +27,6 @@ from io import StringIO
 # ============= local library imports  ==========================
 from Amscope_Camera.core import lib, TOUPCAM_EVENT_IMAGE, TOUPCAM_EVENT_STILLIMAGE, success, HToupCam
 
-from functions import *
 
 class ToupCamCamera(object):
     _data = None

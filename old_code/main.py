@@ -1,13 +1,9 @@
-import numpy as np
-import cv2
 import _thread
-import time
 import os
-from datetime import datetime
 from skimage.filters import median
 from skimage.morphology import disk
 from tkinter import *
-from functions import *
+from old_code.functions import *
 
 # Create folder to store images
 folder = "images\\" + datetime.today().strftime("%m-%d-%Y")

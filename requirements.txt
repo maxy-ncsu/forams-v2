@@ -8,4 +8,4 @@ camera
 matplotlib
 PyQt5
 imutils
-hamamatsu
+sinstruments

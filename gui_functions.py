@@ -1,6 +1,8 @@
 import sys
 import glob
 import serial
+from hamamatsu.dcam import copy_frame, dcam, Stream
+import logging
 
 class Solenoids:
     def __init__(self):
@@ -47,3 +49,24 @@ def serial_ports():
         raise RuntimeError('No ports detected')
 
     return result
+
+def gen_acquire(device, exposure_time=1, nb_frames=1):
+    """Simple acquisition example"""
+    device["exposure_time"] = exposure_time
+    with Stream(device, nb_frames) as stream:
+        logging.info("start acquisition")
+        device.start()
+        for frame in stream:
+            yield copy_frame(frame)
+        logging.info("finished acquisition")
+
+def get_image(exposure_time=0.1, nb_frames=1):
+    with dcam:
+        with dcam[0] as camera:
+            for i, frame in enumerate(
+                gen_acquire(camera, exposure_time, nb_frames)
+            ):
+                logging.info(
+                    f"Frame #{i+1}/{nb_frames} {frame.shape} {frame.dtype}"
+                )
+                return frame
