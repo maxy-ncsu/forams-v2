@@ -1,14 +1,20 @@
+# libraries
 import sys
 import glob
 import serial
 from hamamatsu.dcam import copy_frame, dcam, Stream
 import logging
 
+# Class that stores and prints the states of the solenoids
+# 0 is closed, 1 is open
 class Solenoids:
+    # Solenoid valves all closed initially
     def __init__(self):
-        print("solenoids initialized")
+        print("camera and solenoids initialized")
         self.state = [0, 0, 0, 0, 0]
 
+    # Updates state of solenoid, each index corresponding to solenoid 1,2,3,4,5
+    # Prints if solenoid now closed or opened
     def changeSolenoid(self, sol):
         status = "opened"
         if self.state[sol]: status = "closed"
@@ -16,16 +22,9 @@ class Solenoids:
 
         print("solenoid " + str(sol) + " " + status)
 
+# Returns list of available serial ports
 def serial_ports():
-    """ Lists serial port names
-
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :raises RuntimeError:
-            No ports found
-        :returns:
-            A list of the serial ports available on the system
-    """
+    # Based on OS
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
@@ -36,6 +35,7 @@ def serial_ports():
     else:
         raise EnvironmentError('Unsupported platform')
 
+    # Searches through list of ports to find available one
     result = []
     for port in ports:
         try:
@@ -45,11 +45,13 @@ def serial_ports():
         except (OSError, serial.SerialException):
             pass
 
+    # No ports detected
     if (len(result) < 1):
         raise RuntimeError('No ports detected')
 
     return result
 
+# Code used for Hamamatsu camera image acquisition in other project, ignore
 def gen_acquire(device, exposure_time=1, nb_frames=1):
     """Simple acquisition example"""
     device["exposure_time"] = exposure_time
@@ -60,6 +62,7 @@ def gen_acquire(device, exposure_time=1, nb_frames=1):
             yield copy_frame(frame)
         logging.info("finished acquisition")
 
+# Code used for Hamamatsu camera image acquisition in other project, ignore
 def get_image(exposure_time=0.1, nb_frames=1):
     with dcam:
         with dcam[0] as camera:
